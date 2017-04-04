@@ -91,6 +91,9 @@ def run(bk):
 		if original_format == output_format:
 			bk.writefile(manifest_id, output_binary)
 		elif output_format:
+			# delete the original file
+			bk.deletefile(manifest_id)
+
 			new_ext = '.jpg'
 			if output_format == 'PNG':
 				new_ext = '.png'
@@ -98,19 +101,18 @@ def run(bk):
 
 			# check if file with the same name exists
 			existing_id = bk.href_to_id(new_href)
+			new_uuid = 'id-' + str(uuid.uuid4())
 			if existing_id:
-				# overwrite
-				bk.writefile(existing_id, output_binary)
-			else:
-				# add a new file
-				output_mediaType = "image/jpeg"
-				if output_format == 'PNG':
-					output_mediaType = "image/png"
-				output_baseName = os.path.split(new_href)[1]
-				output_manifestID = 'id-' + str(uuid.uuid4()) # ensure it's unique and valid
-				bk.addfile(output_manifestID, output_baseName, output_binary, output_mediaType)
-				# and then delete the original file
-				bk.deletefile(manifest_id)
+				# don't overwrite but add uuid to new filename
+				new_href = os.path.splitext(OPF_href)[0] + '_' + new_uuid + new_ext
+
+			# add a new file
+			output_mediaType = "image/jpeg"
+			if output_format == 'PNG':
+				output_mediaType = "image/png"
+			output_baseName = os.path.split(new_href)[1]
+			output_manifestID = new_uuid # ensure it's unique and valid
+			bk.addfile(output_manifestID, output_baseName, output_binary, output_mediaType)
 
 			replace_us.append((urllib.parse.quote(OPF_href), urllib.parse.quote(new_href)))
 
