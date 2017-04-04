@@ -20,6 +20,8 @@ def run(bk):
 	set_me_as_cover = '' # if the cover image filename is changed, set the new name here
 	total_space_saved = 0
 
+	skip_png_compression_for_png_inputs = True
+
 	for (manifest_id, OPF_href, media_type) in bk.image_iter():
 		print('\nProcessing image: %s' % OPF_href)
 
@@ -61,18 +63,25 @@ def run(bk):
 		output_binary = ''
 		if (original_format in ['PNG', 'BMP']): # lossless source
 			# to save time, only do lossless compression if the source is lossless
-			imgOut2 = BytesIO()
-			im.save(imgOut2, 'PNG', optimize=True)
-			png_out_size = len(imgOut2.getvalue())
-			print('Output PNG size: %d' % png_out_size)
-			# go with jpg if it saves at least 10%, and significantly more than png does
-			if (jpg_out_size <= 0.9*original_size) and (jpg_out_size <= 0.9*png_out_size):
-				output_format = 'JPEG'
-				output_binary = imgOut1.getvalue()
-			# otherwise, go with png if it saves something
-			elif (png_out_size < original_size):
-				output_format = 'PNG'
-				output_binary = imgOut2.getvalue()
+			# to speed up even more, skip png compression for png inputs, as it usually doesn't help
+			if original_format != 'PNG' or (original_format == 'PNG' and not skip_png_compression_for_png_inputs):
+				imgOut2 = BytesIO()
+				im.save(imgOut2, 'PNG', optimize=True)
+				png_out_size = len(imgOut2.getvalue())
+				print('Output PNG size: %d' % png_out_size)
+				# go with jpg if it saves at least 10%, and significantly more than png does
+				if (jpg_out_size <= 0.9*original_size) and (jpg_out_size <= 0.9*png_out_size):
+					output_format = 'JPEG'
+					output_binary = imgOut1.getvalue()
+				# otherwise, go with png if it saves something
+				elif (png_out_size < original_size):
+					output_format = 'PNG'
+					output_binary = imgOut2.getvalue()
+			else:
+				# go with jpg if it saves at least 10%
+				if (jpg_out_size <= 0.9*original_size):
+					output_format = 'JPEG'
+					output_binary = imgOut1.getvalue()
 		else: # source is lossy
 			# go with jpg if it saves at least 10%
 			if (jpg_out_size <= 0.9*original_size):
