@@ -22,8 +22,14 @@ def run(bk):
 	set_me_as_cover = '' # if the cover image filename is changed, set the new name here
 	set_me_as_cover_name = ''
 	total_space_saved = 0
+	compressed_image_count = 0
 
 	skip_png_compression_for_png_inputs = True
+
+	downscale_image_larger_than_xxx = True
+	large_image_px = 1800 # image is considered large if any of its dimensions is larger than this
+	downscale_to_px = 1600
+	downscaled_image_count = 0
 
 	for (manifest_id, OPF_href, media_type) in bk.image_iter():
 		print('\nProcessing image: %s' % OPF_href)
@@ -50,6 +56,29 @@ def run(bk):
 			print('Not BMP, PNG, or JPEG. Skipped.')
 			continue
 
+		downscaled = False
+		if downscale_image_larger_than_xxx:
+			im_width, im_height = im.size
+			im_new_width, im_new_height = im.size
+
+			if im_width > large_image_px or im_height > large_image_px:
+				if im_width > im_height:
+					im_new_width = downscale_to_px
+					im_new_height = int(downscale_to_px / (im_width / im_height))
+				else:
+					im_new_height = downscale_to_px
+					im_new_width = int(downscale_to_px * (im_width / im_height))
+
+			if im_new_width < im_width:
+				try: # the best-quality resampler PIL supports is LANCZOS. It was named ANTIALIAS in old version
+					resampler = Image.LANCZOS
+				except:
+					resampler = Image.ANTIALIAS
+				im = im.resize((im_new_width, im_new_height), resampler)
+				print('Downscaled image to %dx%dpx' % (im_new_width, im_new_height))
+				downscaled = True
+				# print(im.size)
+
 		# Try a few encoding to get the smallest size.
 		# - PNG - best for texts and sharp patterns, smallest and best quality. Quite big for common photos.
 		# - JPG - good quality/size ratio for photos. Bad for texts. We go with 95% quality for no visible loss or artifact
@@ -67,7 +96,7 @@ def run(bk):
 		if (original_format in ['PNG', 'BMP']): # lossless source
 			# to save time, only do lossless compression if the source is lossless
 			# to speed up even more, skip png compression for png inputs, as it usually doesn't help
-			if original_format != 'PNG' or (original_format == 'PNG' and not skip_png_compression_for_png_inputs):
+			if downscaled or original_format != 'PNG' or (original_format == 'PNG' and not skip_png_compression_for_png_inputs):
 				imgOut2 = BytesIO()
 				im.save(imgOut2, 'PNG', optimize=True)
 				png_out_size = len(imgOut2.getvalue())
@@ -96,6 +125,9 @@ def run(bk):
 			print('Selected format: %s' % output_format)
 			print('Saved space: %d' % space_saved)
 			total_space_saved += space_saved
+			compressed_image_count += 1
+			if downscaled:
+				downscaled_image_count += 1
 		else:
 			print('No significant space saves. No change.')
 
@@ -150,7 +182,7 @@ def run(bk):
 		print('\nSetting %s as cover image...' % set_me_as_cover_name)
 		setCoverImageID(bk, set_me_as_cover)
 
-	print("\nCompressed %d file(s). Saved %s." % (len(replace_us), byteToHumanSize(total_space_saved)))
+	print("\nCompressed %d files. %d of them were downscaled.  Saved %s." % ((compressed_image_count), downscaled_image_count, byteToHumanSize(total_space_saved)))
 
 	print('Done.')
 	return 0
