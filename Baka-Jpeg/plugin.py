@@ -16,8 +16,11 @@ def run(bk):
 	global plugin_path
 	plugin_path = os.path.join(bk._w.plugin_dir, plugin_name)
 
+	coverImgID = getCoverImageID(bk)
+
 	replace_us = [] # list of (find, replace)
 	set_me_as_cover = '' # if the cover image filename is changed, set the new name here
+	set_me_as_cover_name = ''
 	total_space_saved = 0
 
 	skip_png_compression_for_png_inputs = True
@@ -124,6 +127,9 @@ def run(bk):
 			bk.addfile(output_manifestID, output_baseName, output_binary, output_mediaType)
 
 			replace_us.append((urllib.parse.quote(OPF_href), urllib.parse.quote(new_href)))
+			if manifest_id == coverImgID:
+				set_me_as_cover = output_manifestID
+				set_me_as_cover_name = output_baseName
 
 	print('\nFinding and replacing filenames in text...\n')
 	# print(replace_us)
@@ -140,12 +146,43 @@ def run(bk):
 
 		bk.writefile(textID, textContents)
 
-	# TODO: set_me_as_cover
+	if set_me_as_cover:
+		print('\nSetting %s as cover image...' % set_me_as_cover_name)
+		setCoverImageID(bk, set_me_as_cover)
 
 	print("\nCompressed %d file(s). Saved %s." % (len(replace_us), byteToHumanSize(total_space_saved)))
 
 	print('Done.')
 	return 0
+
+def getCoverImageID(bk):
+	# get cover image id from metadata
+	coverImgID = ''
+	metadata = bk.getmetadataxml()
+	stinx = sigil_bs4.BeautifulSoup(metadata, 'xml')
+	for node in stinx.find_all('meta'):
+		if node.get('name') == 'cover':
+			coverImgID = node.get('content')
+			break
+
+	return coverImgID
+
+def setCoverImageID(bk, coverImgID):
+	# set metadata: cover
+	metadata_xml = bk.getmetadataxml()
+	metadata_soup = sigil_bs4.BeautifulSoup(metadata_xml, 'xml')
+	metadata_node = metadata_soup.find('metadata')
+
+	if coverImgID:
+		for node in metadata_node.find_all('meta'): # remove existing info
+			if node.get('name') == 'cover':
+				node.decompose()
+		meta_cover_tag = metadata_soup.new_tag('meta')
+		meta_cover_tag['name'] = 'cover'
+		meta_cover_tag['content'] = coverImgID
+		metadata_node.append(meta_cover_tag)
+
+		bk.setmetadataxml(str(metadata_soup))
 
 def byteToHumanSize(size):
 	if size >= 1000 * 1024 * 1024:
