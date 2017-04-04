@@ -53,17 +53,18 @@ def run(bk):
 		# Only use lossy compression if it saves more than 10%
 		# Note that mode P can't be saved to jpg directly, convert it to RGB first
 		imgOut1 = BytesIO()
-		imgOut2 = BytesIO()
 		im.convert("RGB").save(imgOut1, 'JPEG', quality=95, optimize=True, progressive=True)
-		im.save(imgOut2, 'PNG', optimize=True)
 		jpg_out_size = len(imgOut1.getvalue())
-		png_out_size = len(imgOut2.getvalue())
 		print('Output JPEG size: %d' % jpg_out_size)
-		print('Output PNG size: %d' % png_out_size)
 
 		output_format = '' # empty = do nothing
 		output_binary = ''
 		if (original_format in ['PNG', 'BMP']): # lossless source
+			# to save time, only do lossless compression if the source is lossless
+			imgOut2 = BytesIO()
+			im.save(imgOut2, 'PNG', optimize=True)
+			png_out_size = len(imgOut2.getvalue())
+			print('Output PNG size: %d' % png_out_size)
 			# go with jpg if it saves at least 10%, and significantly more than png does
 			if (jpg_out_size <= 0.9*original_size) and (jpg_out_size <= 0.9*png_out_size):
 				output_format = 'JPEG'
