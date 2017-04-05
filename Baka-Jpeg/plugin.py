@@ -64,10 +64,10 @@ def run(bk):
 			if im_width > large_image_px or im_height > large_image_px:
 				if im_width > im_height:
 					im_new_width = downscale_to_px
-					im_new_height = int(downscale_to_px / (im_width / im_height))
+					im_new_height = int(1.0 * downscale_to_px / (1.0 * im_width / im_height))
 				else:
 					im_new_height = downscale_to_px
-					im_new_width = int(downscale_to_px * (im_width / im_height))
+					im_new_width = int(1.0 * downscale_to_px * (1.0 * im_width / im_height))
 
 			if im_new_width < im_width:
 				try: # the best-quality resampler PIL supports is LANCZOS. It was named ANTIALIAS in old version
