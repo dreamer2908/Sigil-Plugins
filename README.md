@@ -24,10 +24,26 @@ It generates a new identifier in UUIDv4 scheme. The new id is applied to both me
 
 For sources with a lot of junk tags like Skythewood Translations. Probably safe for other sources.
 
-Use with care. Save your file before running it.
+Use with care. Save your file before running it. You won't be able to undo.
+
+Very use-unfriendly. Look at the code to see what it actually does. Some experience in plugin development are needed to use it effectively.
 
 1. Fetch the contents with WebToEpub. [Screenshot](https://i.imgur.com/v0fZL8K.png)
 2. Run though a batch 50+ saved searches to remove much junk. Search around to search for leftover needless styles. Make more saved searches for later use. [Screenshot](https://i.imgur.com/sJ4z5yp.png)
 3. Validate epub with FlightCrew for syntax errors. Ignore all messages about <x> tag not allowed in <y> tag.
 4. Run Baka-Cleaner to fix it up and create clean xhtml code. [Screenshot](https://i.imgur.com/ezSbL8O.png)
 5. Correcting heading, metadata, illustrations, retructuring texts, and other actions to meet my quality baseline.
+
+# Saved Search
+
+My saved searches in Sigil.
+
+# Baka-Img
+
+Warp image in svg and div. 
+
+Insert `<div class="svg_outer svg_inner"><img alt="" src="../Images/your_image.jpg"/></div>` in a HTML file. Run Baka-Img and it will be converted to something like this:
+
+`<div class="svg_outer svg_inner"><svg height="98%" preserveAspectRatio="xMidYMid meet" version="1.1" viewBox="0 0 456 640" width="98%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><image height="640" width="456" xlink:href="../Images/your_image.jpg"/></svg></div>`
+
+There're some options in the code.
