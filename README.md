@@ -1,4 +1,5 @@
 # Baka-Jpeg
+
 Sigil plugin to compress images in ePub, with (supposedly) educated decisions.
 
 It tries a few encodings to get the smallest size, with minimal quality loss.
@@ -14,3 +15,7 @@ To speed things up, it won't try lossless compression with lossy images as it's 
 Moreover, it automatically downscales images larger than 1800px (any dimension) to 1600px (and checks if it helps - always). This is on by default but can be turned off and otherwise configured (by editing the source code - excuse me for the lack of GUI).
 
 Finally, only JPG, BMP, and PNG are processed. You might encounter other formats, but I won't risk messing up animated GIF or some strange formats.
+
+# Baka-UUID
+
+It generates a new identifier in UUIDv4 scheme. The new id is applied to both metadata and toc file.
