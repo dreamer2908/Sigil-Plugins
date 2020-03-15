@@ -1,10 +1,19 @@
 # Sigil Plugins
 
+Sigil plugins and related stuffs I feel like to publish.
+
+There's no installation package; just download and copy the folder to your Sigin plugin folder (usually at `%localappdata%\sigil-ebook\sigil\plugins`) and restart Sigil.
+
+Not intended for average users. Some experience in plugin development or Python + BeautifulSoup are needed.
+
+0. [Baka-Epub](https://github.com/dreamer2908/Baka-Epub) (in another repo)
 1. [Baka-Jpeg](#baka-jpeg)
-1. [Baka-UUID](#baka-uuid)
-1. [Baka-Cleaner](#baka-cleaner)
-1. [Saved Search](#saved-searches)
-1. [Baka-Img](#baka-img)
+2. [Baka-UUID](#baka-uuid)
+3. [Baka-Cleaner](#baka-cleaner)
+4. [Saved Search](#saved-searches)
+5. [Baka-Img](#baka-img)
+
+(Sorted by publication date)
 
 # Baka-Jpeg
 
