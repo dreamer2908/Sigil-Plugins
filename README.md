@@ -1,3 +1,11 @@
+# Sigil Plugins
+
+1. [Baka-Jpeg](#baka-jpeg)
+1. [Baka-UUID](#baka-uuid)
+1. [Baka-Cleaner](#baka-cleaner)
+1. [Saved Search](#saved-searches)
+1. [Baka-Img](#baka-img)
+
 # Baka-Jpeg
 
 Sigil plugin to compress images in ePub, with (supposedly) educated decisions.
@@ -34,7 +42,7 @@ Very user-unfriendly. Look at the code to see what it actually does. Some experi
 4. Run Baka-Cleaner to fix it up and create clean xhtml code. [Screenshot](https://i.imgur.com/ezSbL8O.png)
 5. Correcting heading, metadata, illustrations, retructuring texts, and other actions to meet my quality baseline.
 
-# Saved Search
+# Saved Searches
 
 My saved searches in Sigil.
 
