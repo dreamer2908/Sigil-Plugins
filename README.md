@@ -26,7 +26,7 @@ For sources with a lot of junk tags like Skythewood Translations. Probably safe 
 
 Use with care. Save your file before running it. You won't be able to undo.
 
-Very use-unfriendly. Look at the code to see what it actually does. Some experience in plugin development are needed to use it effectively.
+Very user-unfriendly. Look at the code to see what it actually does. Some experience in plugin development are needed to use it effectively.
 
 1. Fetch the contents with WebToEpub. [Screenshot](https://i.imgur.com/v0fZL8K.png)
 2. Run though a batch 50+ saved searches to remove much junk. Search around to search for leftover needless styles. Make more saved searches for later use. [Screenshot](https://i.imgur.com/sJ4z5yp.png)
