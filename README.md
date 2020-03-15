@@ -19,3 +19,15 @@ Finally, only JPG, BMP, and PNG are processed. You might encounter other formats
 # Baka-UUID
 
 It generates a new identifier in UUIDv4 scheme. The new id is applied to both metadata and toc file.
+
+# Baka-Cleaner
+
+For sources with a lot of junk tags like Skythewood Translations. Probably safe for other sources.
+
+Use with care. Save your file before running it.
+
+1. Fetch the contents with WebToEpub. [Screenshot](https://i.imgur.com/v0fZL8K.png)
+2. Run though a batch 50+ saved searches to remove much junk. Search around to search for leftover needless styles. Make more saved searches for later use. [Screenshot](https://i.imgur.com/sJ4z5yp.png)
+3. Validate epub with FlightCrew for syntax errors. Ignore all messages about <x> tag not allowed in <y> tag.
+4. Run Baka-Cleaner to fix it up and create clean xhtml code. [Screenshot](https://i.imgur.com/ezSbL8O.png)
+5. Correcting heading, metadata, illustrations, retructuring texts, and other actions to meet my quality baseline.
