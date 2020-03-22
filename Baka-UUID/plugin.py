@@ -58,7 +58,7 @@ def editIdentifierInToC(bk, BookId):
 	# change the content of the identifier
 	for node in metaNode.find_all('meta'):
 		if node.get('name') == "dtb:uid":
-			node['content'] = "urn:uuid:%s" % (BookId)
+			node['content'] = BookId
 			print('Setting identifier in ToC: %s' % node)
 
 	# write back
