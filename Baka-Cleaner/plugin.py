@@ -544,22 +544,39 @@ def run(bk):
 				print('Unwrapped %d div tags.' % modifiedTagCount)
 
 
+		# remove empty span
+		# do this before wrap stray tags
 		def removeEmptySpan():
+			def removeEmptySpanSub(spanTag):
+				if spanTag.parent is None:
+					return False
+
+				modified = False
+				if containChildTags(spanTag, ['span']):
+					for subSpanTag in spanTag.find_all(['span']):
+						changed = removeEmptySpanSub(subSpanTag)
+						if changed:
+							modified = True
+
+				if spanTag.get_text().strip() == '' and not containChildTags(spanTag, ['span', 'img']): # if it still has some span, don't decompose it
+					spanTag.unwrap()
+					modified = True
+				elif not (spanTag.get('style') or (spanTag.get('id') and spanTag.get('id').startswith('_Toc'))):
+					spanTag.unwrap()
+					modified = True
+				elif spanTag.get('style') and (spanTag.get('style').strip() == "font-weight: 400;" or spanTag.get('style').strip() == ""):
+					spanTag.unwrap()
+					modified = True
+
+				return modified
+
 			nonlocal soup
-			# remove empty span
-			# do this before wrap stray tags
 			plsWriteBack = False
+
 			for spanTag in soup.find_all(['span']):
-				if spanTag.get_text().strip() == '' and len(spanTag.find_all(['img'])) == 0:
-					spanTag.decompose()
+				modified = removeEmptySpanSub(spanTag)
+				if modified:
 					plsWriteBack = True
-				else:
-					if not (spanTag.get('style') or (spanTag.get('id') and spanTag.get('id').startswith('_Toc'))):
-						spanTag.unwrap()
-						plsWriteBack = True
-					elif spanTag.get('style') and (spanTag.get('style').strip() == "font-weight: 400;" or spanTag.get('style').strip() == ""):
-						spanTag.unwrap()
-						plsWriteBack = True
 
 			if plsWriteBack:
 				reloadSoup()
@@ -658,6 +675,10 @@ def canBeConvertedIntoP(divTag):
 		return True
 	else:
 		return False
+
+def containChildTags(spanTag, tagList=None):
+	childTags = spanTag.find_all(tagList) if tagList is not None else spanTag.find_all()
+	return len(childTags) > 0
 
 def canBeUnwrap(divTag):
 	return not (divTag.has_attr('id') or divTag.has_attr('class') or divTag.has_attr('style'))
